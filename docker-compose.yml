@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  ms-recursos:
+    build: ./ms-recursos
+    container_name: ms-recursos
+    ports:
+      - "8081:8081"
+    networks:
+      - innovagest-net
+
+  ms-tareas:
+    build: ./ms-tareas
+    container_name: ms-tareas
+    ports:
+      - "8082:8082"
+    networks:
+      - innovagest-net
+
+  ms-dashboard:
+    build: ./ms-dashboard
+    container_name: ms-dashboard
+    ports:
+      - "8083:8083"
+    depends_on:
+      - ms-recursos
+      - ms-tareas
+    networks:
+      - innovagest-net
+
+  frontend:
+    build: ./mvp
+    container_name: innovagest-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - ms-dashboard
+    networks:
+      - innovagest-net
+
+networks:
+  innovagest-net:
+    driver: bridge

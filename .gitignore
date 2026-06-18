@@ -1,0 +1,12 @@
+# Frontend
+mvp/node_modules/
+mvp/dist/
+
+# Backend
+ms-recursos/target/
+ms-tareas/target/
+ms-dashboard/target/
+
+# General
+.DS_Store
+*.log
