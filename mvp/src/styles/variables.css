@@ -1,0 +1,32 @@
+:root {
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --sidebar: #10172b;
+  --sidebar-text: #aeb8d0;
+  --primary: #4f6bff;
+  --teal: #14b8a6;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --text: #1e2433;
+  --text-muted: #6b7280;
+  --border: #e5e9f2;
+  --radius: 14px;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}

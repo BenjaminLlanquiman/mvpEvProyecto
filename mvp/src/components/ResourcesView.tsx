@@ -3,6 +3,7 @@ import type { Resource } from '../types'
 import { API_BASE } from '../config/api'
 import { useState } from 'react'
 
+// Roles disponibles para el equipo de Innovatech
 const ROLES = [
   'Project Manager',
   'Desarrollador Backend',
@@ -13,15 +14,25 @@ const ROLES = [
   'UX Designer',
 ]
 
+// Regiones donde opera Innovatech (un proyecto por región)
 const REGIONES = ['Silicon Valley', 'Europa', 'Asia']
 
 interface ResourcesViewProps {
-  resources: Resource[]
-  onRefetch: () => Promise<void>
+  resources: Resource[]          // Lista de recursos desde el backend
+  onRefetch: () => Promise<void> // Recarga los datos tras crear o eliminar
 }
 
+/**
+ * ResourcesView — vista de gestión de recursos humanos.
+ * Permite agregar personas al equipo, ver su carga laboral
+ * por región y eliminarlas si es necesario.
+ */
 export default function ResourcesView({ resources, onRefetch }: ResourcesViewProps) {
+
+  // Regiones únicas presentes en los recursos actuales
   const regions = [...new Set(resources.map((r) => r.region))]
+
+  // Estado del formulario de nuevo recurso
   const [form, setForm] = useState({
     nombre: '',
     rol: ROLES[0],
@@ -29,8 +40,11 @@ export default function ResourcesView({ resources, onRefetch }: ResourcesViewPro
     capacidadHoras: 40,
     horasAsignadas: 0,
   })
+
+  // Indica si se está guardando un recurso
   const [loading, setLoading] = useState(false)
 
+  // Crea un nuevo recurso en el backend y recarga la lista
   async function handleCrear() {
     if (!form.nombre.trim()) return
     setLoading(true)
@@ -46,6 +60,7 @@ export default function ResourcesView({ resources, onRefetch }: ResourcesViewPro
           horasAsignadas: form.horasAsignadas,
         }),
       })
+      // Limpia el formulario tras guardar
       setForm({ nombre: '', rol: ROLES[0], region: REGIONES[0], capacidadHoras: 40, horasAsignadas: 0 })
       await onRefetch()
     } finally {
@@ -53,6 +68,7 @@ export default function ResourcesView({ resources, onRefetch }: ResourcesViewPro
     }
   }
 
+  // Elimina un recurso del backend y recarga la lista
   async function handleEliminar(id: string) {
     await fetch(`${API_BASE.recursos}/${id}`, { method: 'DELETE' })
     await onRefetch()
@@ -60,9 +76,13 @@ export default function ResourcesView({ resources, onRefetch }: ResourcesViewPro
 
   return (
     <div className="view">
+
+      {/* Formulario para agregar un nuevo integrante al equipo */}
       <section className="form-card">
         <h2 className="section-title">Agregar recurso</h2>
         <div className="form-grid">
+
+          {/* Nombre — solo acepta letras y espacios */}
           <div className="form-field">
             <label className="form-label">Nombre completo</label>
             <input
@@ -78,6 +98,7 @@ export default function ResourcesView({ resources, onRefetch }: ResourcesViewPro
             />
           </div>
 
+          {/* Rol — selección desde lista predefinida */}
           <div className="form-field">
             <label className="form-label">Rol</label>
             <select
@@ -89,6 +110,7 @@ export default function ResourcesView({ resources, onRefetch }: ResourcesViewPro
             </select>
           </div>
 
+          {/* Región — determina a qué equipo pertenece */}
           <div className="form-field">
             <label className="form-label">Región</label>
             <select
@@ -100,6 +122,7 @@ export default function ResourcesView({ resources, onRefetch }: ResourcesViewPro
             </select>
           </div>
 
+          {/* Capacidad máxima de horas por semana */}
           <div className="form-field">
             <label className="form-label">Horas/semana</label>
             <input
@@ -112,6 +135,7 @@ export default function ResourcesView({ resources, onRefetch }: ResourcesViewPro
             />
           </div>
 
+          {/* Horas actualmente asignadas al recurso */}
           <div className="form-field">
             <label className="form-label">Horas asignadas</label>
             <input
@@ -124,19 +148,23 @@ export default function ResourcesView({ resources, onRefetch }: ResourcesViewPro
             />
           </div>
 
+          {/* Botón de acción alineado al fondo del campo */}
           <div className="form-field form-field--action">
             <label className="form-label">&nbsp;</label>
             <button className="btn-primary" onClick={handleCrear} disabled={loading}>
               {loading ? 'Guardando...' : '+ Agregar recurso'}
             </button>
           </div>
+
         </div>
       </section>
 
+      {/* Mensaje cuando no hay recursos registrados */}
       {resources.length === 0 && (
         <p className="empty-state">No hay recursos aún. Agrega el primero usando el formulario.</p>
       )}
 
+      {/* Lista de recursos agrupados por región */}
       {regions.map((region) => (
         <section key={region} className="resource-group">
           <h2 className="section-title">{region}</h2>
@@ -145,15 +173,21 @@ export default function ResourcesView({ resources, onRefetch }: ResourcesViewPro
               const { percent, level } = computeWorkload(r)
               return (
                 <div className="resource-row" key={r.id}>
+
+                  {/* Nombre y rol del recurso */}
                   <div className="resource-row__info">
                     <p className="resource-row__name">{r.name}</p>
                     <p className="resource-row__role">{r.role}</p>
                   </div>
+
+                  {/* Horas asignadas vs capacidad total */}
                   <div className="resource-row__hours">
                     <span className="resource-row__hours-text">
                       {r.allocatedHours}h / {r.capacityHours}h
                     </span>
                   </div>
+
+                  {/* Barra de carga con color según nivel */}
                   <div className="resource-row__bar">
                     <div className="progress-track progress-track--wide">
                       <div
@@ -163,14 +197,20 @@ export default function ResourcesView({ resources, onRefetch }: ResourcesViewPro
                     </div>
                     <span className="mono">{percent}%</span>
                   </div>
+
+                  {/* Badge: Óptimo / Sobrecarga / Subutilizado */}
                   <span className={`badge badge--${level}`}>{LEVEL_LABEL[level]}</span>
+
+                  {/* Botón para eliminar el recurso */}
                   <button className="btn-danger" onClick={() => handleEliminar(r.id)}>✕</button>
+
                 </div>
               )
             })}
           </div>
         </section>
       ))}
+
     </div>
   )
 }

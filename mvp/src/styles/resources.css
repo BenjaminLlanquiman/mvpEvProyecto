@@ -1,0 +1,105 @@
+.resource-group {
+  margin-bottom: 28px;
+}
+
+.resource-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resource-row {
+  display: grid;
+  grid-template-columns: 200px 100px 1fr 110px;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.resource-row__name {
+  margin: 0;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.resource-row__role {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.resource-row__hours {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.resource-row__hours-text {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.resource-row__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: #eef0f6;
+  overflow: hidden;
+}
+
+.progress-track--wide {
+  width: 100%;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+
+.progress-fill--primary { background: var(--primary); }
+.progress-fill--teal { background: var(--teal); }
+.progress-fill--red { background: var(--red); }
+.progress-fill--amber { background: var(--amber); }
+.progress-fill--optimo { background: var(--teal); }
+.progress-fill--sobrecarga { background: var(--red); }
+.progress-fill--subutilizado { background: var(--amber); }
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge--red { background: rgba(239, 68, 68, 0.12); color: var(--red); }
+.badge--amber { background: rgba(245, 158, 11, 0.12); color: #b45309; }
+.badge--teal { background: rgba(20, 184, 166, 0.12); color: #0d9488; }
+.badge--sobrecarga { background: rgba(239, 68, 68, 0.12); color: var(--red); }
+.badge--optimo { background: rgba(20, 184, 166, 0.12); color: #0d9488; }
+.badge--subutilizado { background: rgba(245, 158, 11, 0.12); color: #b45309; }
+
+.tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #eef1ff;
+  color: var(--primary);
+}
+
+@media (max-width: 1024px) {
+  .resource-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}

@@ -7,19 +7,24 @@ import { IconTrendUp, IconUsers, IconAlertTriangle } from './icons'
 import type { Resource, Summary, TasksByProject, ProgressPoint } from '../types'
 
 interface DashboardProps {
-  projects: never[]
-  resources: Resource[]
-  summary: Summary
-  tasksByProject: TasksByProject
-  history: ProgressPoint[]
+  projects: never[]       // No se usa — la Opción C no gestiona proyectos directamente
+  resources: Resource[]   // Equipo distribuido en las 3 regiones
+  summary: Summary        // KPIs calculados por el backend
+  tasksByProject: TasksByProject // Tareas agrupadas por proyecto cliente
+  history: ProgressPoint[]      // Historial de avance para el gráfico de línea
 }
 
 export default function Dashboard({ resources, summary, tasksByProject, history }: DashboardProps) {
+
+  // Aplana todas las tareas de los 3 proyectos
   const allTasks = Object.values(tasksByProject).flat()
   const totalTareas = allTasks.length
   const tareasCompletadas = allTasks.filter(t => t.status === 'done').length
+
+  // Porcentaje de tareas completadas sobre el total
   const porcentajeCompletado = totalTareas === 0 ? 0 : Math.round((tareasCompletadas / totalTareas) * 100)
 
+  // Genera alertas automáticas para recursos con carga > 100%
   const alerts: string[] = []
   resources.forEach((r) => {
     const percent = Math.round((r.allocatedHours / r.capacityHours) * 100)
@@ -30,7 +35,8 @@ export default function Dashboard({ resources, summary, tasksByProject, history 
 
   return (
     <div className="view">
-      {/* KPIs */}
+
+      {/* KPIs — métricas principales del sistema */}
       <section className="kpi-grid">
         <KpiCard label="Tareas completadas" value={porcentajeCompletado} suffix="%" icon={IconTrendUp} tone="primary" />
         <KpiCard label="Total recursos" value={resources.length} icon={IconUsers} tone="teal" />
@@ -38,7 +44,7 @@ export default function Dashboard({ resources, summary, tasksByProject, history 
         <KpiCard label="Equipos en carga óptima" value={Math.round(summary.optimoPercent)} suffix="%" icon={IconUsers} tone="amber" />
       </section>
 
-      {/* Alertas */}
+      {/* Alertas — solo se muestran si hay recursos en sobrecarga */}
       {alerts.length > 0 && (
         <section className="alerts">
           <h2 className="section-title">Alertas automáticas</h2>
@@ -53,8 +59,9 @@ export default function Dashboard({ resources, summary, tasksByProject, history 
         </section>
       )}
 
-      {/* Objetivos */}
+      {/* Objetivos — progreso hacia las metas del sistema */}
       <section className="objectives-grid">
+        {/* Avance global de tareas completadas */}
         <ObjectiveCard
           title="Avance de tareas"
           value={`${porcentajeCompletado}%`}
@@ -62,6 +69,7 @@ export default function Dashboard({ resources, summary, tasksByProject, history 
           percent={porcentajeCompletado}
           tone="primary"
         />
+        {/* Porcentaje del equipo con carga balanceada */}
         <ObjectiveCard
           title="Equipos en carga óptima"
           value={`${Math.round(summary.optimoPercent)}%`}
@@ -69,6 +77,7 @@ export default function Dashboard({ resources, summary, tasksByProject, history 
           percent={summary.optimoPercent}
           tone={summary.optimoPercent >= 60 ? 'teal' : 'amber'}
         />
+        {/* Total de personas activas en el sistema */}
         <ObjectiveCard
           title="Recursos activos"
           value={`${resources.length}`}
@@ -78,15 +87,19 @@ export default function Dashboard({ resources, summary, tasksByProject, history 
         />
       </section>
 
-      {/* Gráficos */}
+      {/* Gráficos — evolución del avance y estado de tareas */}
       <section className="charts-grid">
+        {/* Línea de evolución del % completado en el tiempo */}
         <ProgressTrendChart data={history} />
+        {/* Barras con cantidad de tareas por estado (global) */}
         <TasksStatusChart tasksByProject={tasksByProject} />
       </section>
 
+      {/* Gráfico de carga laboral por región */}
       <section className="charts-grid">
         <WorkloadByRegionChart resources={resources} />
       </section>
+
     </div>
   )
 }

@@ -1,9 +1,10 @@
-import type { Project, Resource, Summary, WorkloadLevel } from './types'
+import type { Resource, WorkloadLevel } from './types'
 
-export function formatCLP(value: number): string {
-  return '$' + Math.round(value).toLocaleString('es-CL')
-}
-
+/**
+ * computeWorkload — calcula el porcentaje de carga de un recurso
+ * y determina su nivel: sobrecarga (>100%), óptimo (60-100%)
+ * o subutilizado (<60%).
+ */
 export function computeWorkload(resource: Resource): { percent: number; level: WorkloadLevel } {
   const percent = Math.round((resource.allocatedHours / resource.capacityHours) * 100)
   let level: WorkloadLevel = 'optimo'
@@ -12,31 +13,9 @@ export function computeWorkload(resource: Resource): { percent: number; level: W
   return { percent, level }
 }
 
+// Etiquetas visibles en la UI para cada nivel de carga
 export const LEVEL_LABEL: Record<WorkloadLevel, string> = {
-  sobrecarga: 'Sobrecarga',
-  optimo: 'Óptimo',
-  subutilizado: 'Subutilizado',
-}
-
-export function computeSummary(projects: Project[], resources: Resource[]): Summary {
-  const avgProgress = projects.reduce((a, p) => a + p.progress, 0) / projects.length
-  const totalBudget = projects.reduce((a, p) => a + p.budgetTotal, 0)
-  const totalSpent = projects.reduce((a, p) => a + p.budgetSpent, 0)
-  const atRisk = projects.filter((p) => p.status === 'En riesgo').length
-
-  const workloads = resources.map(computeWorkload)
-  const overloaded = workloads.filter((w) => w.level === 'sobrecarga').length
-  const underused = workloads.filter((w) => w.level === 'subutilizado').length
-  const optimo = workloads.filter((w) => w.level === 'optimo').length
-
-  return {
-    avgProgress,
-    totalBudget,
-    totalSpent,
-    budgetPercent: (totalSpent / totalBudget) * 100,
-    atRisk,
-    overloadedPercent: (overloaded / resources.length) * 100,
-    underusedPercent: (underused / resources.length) * 100,
-    optimoPercent: (optimo / resources.length) * 100,
-  }
+  sobrecarga:   'Sobrecarga',   // Carga > 100% — alerta crítica
+  optimo:       'Óptimo',       // Carga entre 60% y 100% — ideal
+  subutilizado: 'Subutilizado', // Carga < 60% — recurso disponible
 }

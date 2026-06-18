@@ -1,5 +1,6 @@
 import type { SVGProps } from 'react'
 
+// Propiedades base compartidas por todos los iconos SVG
 const base: SVGProps<SVGSVGElement> = {
   viewBox: '0 0 24 24',
   fill: 'none',
@@ -9,6 +10,7 @@ const base: SVGProps<SVGSVGElement> = {
   strokeLinejoin: 'round',
 }
 
+// Ícono de medidor — usado en el Dashboard (navegación sidebar)
 export function IconGauge(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base} {...props}>
@@ -19,6 +21,7 @@ export function IconGauge(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+// Ícono de personas — usado en KPIs de recursos y navegación sidebar
 export function IconUsers(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base} {...props}>
@@ -30,6 +33,7 @@ export function IconUsers(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+// Ícono de barras — usado en Proyectos (navegación sidebar)
 export function IconLayoutGrid(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base} {...props}>
@@ -40,6 +44,7 @@ export function IconLayoutGrid(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+// Ícono de señal — usado en el indicador "En vivo" del TopBar
 export function IconPulse(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base} {...props}>
@@ -48,6 +53,7 @@ export function IconPulse(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+// Ícono de tendencia al alza — usado en KPI de tareas completadas
 export function IconTrendUp(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base} {...props}>
@@ -58,6 +64,7 @@ export function IconTrendUp(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+// Ícono de billetera — disponible para uso futuro (presupuesto)
 export function IconWallet(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base} {...props}>
@@ -68,6 +75,7 @@ export function IconWallet(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+// Ícono de alerta — usado en KPI de sobrecarga y alertas automáticas
 export function IconAlertTriangle(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base} {...props}>
@@ -78,6 +86,7 @@ export function IconAlertTriangle(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+// Ícono de corazón — representa el sector Salud (Proyecto Gestión de Pacientes)
 export function IconHeart(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base} {...props}>
@@ -86,6 +95,7 @@ export function IconHeart(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+// Ícono de banco — representa el sector Finanzas (Proyecto Banca Móvil)
 export function IconBank(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base} {...props}>
@@ -99,6 +109,7 @@ export function IconBank(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+// Ícono de birrete — representa el sector Educación (Proyecto E-Learning)
 export function IconCap(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base} {...props}>
