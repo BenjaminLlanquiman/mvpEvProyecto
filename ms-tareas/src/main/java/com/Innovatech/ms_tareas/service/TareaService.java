@@ -31,13 +31,13 @@ public class TareaService {
         return repository.findById(id);
     }
 
-    public Tarea actualizar(Long id, Tarea datos) {
-        return repository.findById(id).map(t -> {
-            t.setTitulo(datos.getTitulo());
-            t.setEstado(datos.getEstado());
-            t.setProyectoId(datos.getProyectoId());
-            return repository.save(t);
-        }).orElseThrow(() -> new RuntimeException("Tarea no encontrada: " + id));
+   public Tarea actualizar(Long id, Tarea datos) {
+    return repository.findById(id).map(t -> {
+        if (datos.getTitulo() != null) t.setTitulo(datos.getTitulo());
+        if (datos.getEstado() != null) t.setEstado(datos.getEstado());
+        if (datos.getProyectoId() != null) t.setProyectoId(datos.getProyectoId());
+        return repository.save(t);
+    }).orElseThrow(() -> new RuntimeException("Tarea no encontrada: " + id));
     }
 
     public void eliminar(Long id) {

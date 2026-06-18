@@ -20,18 +20,20 @@ public class DashboardService {
         this.restTemplate = restTemplate;
     }
 
-    public DashboardDTO obtenerDashboard() {
-        Recurso[] recursosArr = restTemplate.getForObject(MS_RECURSOS_URL, Recurso[].class);
-        Tarea[] tareasArr = restTemplate.getForObject(MS_TAREAS_URL, Tarea[].class);
+   public DashboardDTO obtenerDashboard() {
+    Recurso[] recursosArr = restTemplate.getForObject(MS_RECURSOS_URL, Recurso[].class);
+    Tarea[] tareasArr = restTemplate.getForObject(MS_TAREAS_URL, Tarea[].class);
 
-        List<Recurso> recursos = recursosArr != null ? Arrays.asList(recursosArr) : List.of();
-        List<Tarea> tareas = tareasArr != null ? Arrays.asList(tareasArr) : List.of();
+    List<Recurso> recursos = recursosArr != null ? Arrays.asList(recursosArr) : List.of();
+    List<Tarea> tareas = tareasArr != null ? Arrays.asList(tareasArr) : List.of();
 
-        Map<String, List<Tarea>> tareasPorProyecto = tareas.stream()
-                .collect(Collectors.groupingBy(Tarea::getProyectoId));
+    // Filtrar tareas con proyectoId nulo antes de agrupar
+    Map<String, List<Tarea>> tareasPorProyecto = tareas.stream()
+            .filter(t -> t.getProyectoId() != null && !t.getProyectoId().isBlank())
+            .collect(Collectors.groupingBy(Tarea::getProyectoId));
 
-        DashboardDTO.Summary summary = new DashboardDTO.Summary(recursos, tareas);
+    DashboardDTO.Summary summary = new DashboardDTO.Summary(recursos, tareas);
 
-        return new DashboardDTO(recursos, tareasPorProyecto, summary);
-    }
+    return new DashboardDTO(recursos, tareasPorProyecto, summary);
+}
 }
