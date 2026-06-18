@@ -63,48 +63,78 @@ export default function ResourcesView({ resources, onRefetch }: ResourcesViewPro
       <section className="form-card">
         <h2 className="section-title">Agregar recurso</h2>
         <div className="form-grid">
-          <input
-            className="form-input"
-            placeholder="Nombre completo"
-            value={form.nombre}
-            onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))}
-          />
-          <select
-            className="form-input"
-            value={form.rol}
-            onChange={e => setForm(f => ({ ...f, rol: e.target.value }))}
-          >
-            {ROLES.map(r => <option key={r}>{r}</option>)}
-          </select>
-          <select
-            className="form-input"
-            value={form.region}
-            onChange={e => setForm(f => ({ ...f, region: e.target.value }))}
-          >
-            {REGIONES.map(r => <option key={r}>{r}</option>)}
-          </select>
-          <input
-            className="form-input"
-            type="number"
-            placeholder="Capacidad horas"
-            value={form.capacidadHoras}
-            onChange={e => setForm(f => ({ ...f, capacidadHoras: Number(e.target.value) }))}
-          />
-          <input
-            className="form-input"
-            type="number"
-            placeholder="Horas asignadas"
-            value={form.horasAsignadas}
-            onChange={e => setForm(f => ({ ...f, horasAsignadas: Number(e.target.value) }))}
-          />
-          <button className="btn-primary" onClick={handleCrear} disabled={loading}>
-            {loading ? 'Guardando...' : '+ Agregar'}
-          </button>
+          <div className="form-field">
+            <label className="form-label">Nombre completo</label>
+            <input
+              className="form-input"
+              placeholder="Ej: Ana Torres"
+              value={form.nombre}
+              onChange={e => {
+                const valor = e.target.value
+                if (/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(valor)) {
+                  setForm(f => ({ ...f, nombre: valor }))
+                }
+              }}
+            />
+          </div>
+
+          <div className="form-field">
+            <label className="form-label">Rol</label>
+            <select
+              className="form-input"
+              value={form.rol}
+              onChange={e => setForm(f => ({ ...f, rol: e.target.value }))}
+            >
+              {ROLES.map(r => <option key={r}>{r}</option>)}
+            </select>
+          </div>
+
+          <div className="form-field">
+            <label className="form-label">Región</label>
+            <select
+              className="form-input"
+              value={form.region}
+              onChange={e => setForm(f => ({ ...f, region: e.target.value }))}
+            >
+              {REGIONES.map(r => <option key={r}>{r}</option>)}
+            </select>
+          </div>
+
+          <div className="form-field">
+            <label className="form-label">Horas/semana</label>
+            <input
+              className="form-input"
+              type="number"
+              min={1}
+              max={60}
+              value={form.capacidadHoras}
+              onChange={e => setForm(f => ({ ...f, capacidadHoras: Number(e.target.value) }))}
+            />
+          </div>
+
+          <div className="form-field">
+            <label className="form-label">Horas asignadas</label>
+            <input
+              className="form-input"
+              type="number"
+              min={0}
+              max={60}
+              value={form.horasAsignadas}
+              onChange={e => setForm(f => ({ ...f, horasAsignadas: Number(e.target.value) }))}
+            />
+          </div>
+
+          <div className="form-field form-field--action">
+            <label className="form-label">&nbsp;</label>
+            <button className="btn-primary" onClick={handleCrear} disabled={loading}>
+              {loading ? 'Guardando...' : '+ Agregar recurso'}
+            </button>
+          </div>
         </div>
       </section>
 
       {resources.length === 0 && (
-        <p className="empty-state">No hay recursos aún. Agrega el primero.</p>
+        <p className="empty-state">No hay recursos aún. Agrega el primero usando el formulario.</p>
       )}
 
       {regions.map((region) => (
@@ -118,6 +148,11 @@ export default function ResourcesView({ resources, onRefetch }: ResourcesViewPro
                   <div className="resource-row__info">
                     <p className="resource-row__name">{r.name}</p>
                     <p className="resource-row__role">{r.role}</p>
+                  </div>
+                  <div className="resource-row__hours">
+                    <span className="resource-row__hours-text">
+                      {r.allocatedHours}h / {r.capacityHours}h
+                    </span>
                   </div>
                   <div className="resource-row__bar">
                     <div className="progress-track progress-track--wide">

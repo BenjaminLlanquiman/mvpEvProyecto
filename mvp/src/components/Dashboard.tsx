@@ -1,50 +1,44 @@
 import KpiCard from './KpiCard'
-import ProjectCard from './ProjectCard'
 import ObjectiveCard from './ObjectiveCard'
 import ProgressTrendChart from './charts/ProgressTrendChart'
 import TasksStatusChart from './charts/TasksStatusChart'
-import BudgetDistributionChart from './charts/BudgetDistributionChart'
 import WorkloadByRegionChart from './charts/WorkloadByRegionChart'
-import { IconTrendUp, IconWallet, IconAlertTriangle, IconUsers } from './icons'
-import { formatCLP } from '../utils'
-import type { Project, Resource, Summary, TasksByProject, ProgressPoint } from '../types'
+import { IconTrendUp, IconUsers, IconAlertTriangle } from './icons'
+import type { Resource, Summary, TasksByProject, ProgressPoint } from '../types'
 
 interface DashboardProps {
-  projects: Project[]
+  projects: never[]
   resources: Resource[]
   summary: Summary
   tasksByProject: TasksByProject
   history: ProgressPoint[]
 }
 
-export default function Dashboard({ projects, resources, summary, tasksByProject, history }: DashboardProps) {
+export default function Dashboard({ resources, summary, tasksByProject, history }: DashboardProps) {
+  const allTasks = Object.values(tasksByProject).flat()
+  const totalTareas = allTasks.length
+  const tareasCompletadas = allTasks.filter(t => t.status === 'done').length
+  const porcentajeCompletado = totalTareas === 0 ? 0 : Math.round((tareasCompletadas / totalTareas) * 100)
+
   const alerts: string[] = []
-
-  projects.forEach((p) => {
-    if (p.status === 'En riesgo') {
-      alerts.push(`Proyecto ${p.id} — ${p.name}: avance por debajo de lo planificado.`)
-    }
-  })
-
   resources.forEach((r) => {
     const percent = Math.round((r.allocatedHours / r.capacityHours) * 100)
-    if (percent > 110) {
+    if (percent > 100) {
       alerts.push(`${r.name} (${r.region}): carga de ${percent}% — sobrecarga crítica.`)
     }
   })
 
-  const budgetTone: 'red' | 'teal' = summary.budgetPercent > 90 ? 'red' : 'teal'
-  const balanceTone: 'teal' | 'amber' = summary.optimoPercent >= 60 ? 'teal' : 'amber'
-
   return (
     <div className="view">
+      {/* KPIs */}
       <section className="kpi-grid">
-        <KpiCard label="Avance promedio" value={Math.round(summary.avgProgress)} suffix="%" icon={IconTrendUp} tone="primary" />
-        <KpiCard label="Presupuesto consumido" value={formatCLP(summary.totalSpent)} icon={IconWallet} tone="teal" />
-        <KpiCard label="Proyectos en riesgo" value={summary.atRisk} icon={IconAlertTriangle} tone="red" />
-        <KpiCard label="Equipos con sobrecarga" value={Math.round(summary.overloadedPercent)} suffix="%" icon={IconUsers} tone="amber" />
+        <KpiCard label="Tareas completadas" value={porcentajeCompletado} suffix="%" icon={IconTrendUp} tone="primary" />
+        <KpiCard label="Total recursos" value={resources.length} icon={IconUsers} tone="teal" />
+        <KpiCard label="Recursos en sobrecarga" value={Math.round(summary.overloadedPercent)} suffix="%" icon={IconAlertTriangle} tone="red" />
+        <KpiCard label="Equipos en carga óptima" value={Math.round(summary.optimoPercent)} suffix="%" icon={IconUsers} tone="amber" />
       </section>
 
+      {/* Alertas */}
       {alerts.length > 0 && (
         <section className="alerts">
           <h2 className="section-title">Alertas automáticas</h2>
@@ -59,47 +53,39 @@ export default function Dashboard({ projects, resources, summary, tasksByProject
         </section>
       )}
 
+      {/* Objetivos */}
       <section className="objectives-grid">
         <ObjectiveCard
-          title="Avance general de proyectos"
-          value={`${Math.round(summary.avgProgress)}%`}
-          objectiveLabel="Meta: 100% (cierre del proyecto)"
-          percent={summary.avgProgress}
+          title="Avance de tareas"
+          value={`${porcentajeCompletado}%`}
+          objectiveLabel="Meta: 100% de tareas completadas"
+          percent={porcentajeCompletado}
           tone="primary"
-        />
-        <ObjectiveCard
-          title="Ejecución presupuestaria"
-          value={formatCLP(summary.totalSpent)}
-          objectiveLabel={`Presupuesto total asignado: ${formatCLP(summary.totalBudget)}`}
-          percent={summary.budgetPercent}
-          tone={budgetTone}
         />
         <ObjectiveCard
           title="Equipos en carga óptima"
           value={`${Math.round(summary.optimoPercent)}%`}
           objectiveLabel="Meta: 100% del equipo en carga balanceada"
           percent={summary.optimoPercent}
-          tone={balanceTone}
+          tone={summary.optimoPercent >= 60 ? 'teal' : 'amber'}
+        />
+        <ObjectiveCard
+          title="Recursos activos"
+          value={`${resources.length}`}
+          objectiveLabel="Equipo distribuido en 3 regiones"
+          percent={resources.length > 0 ? 100 : 0}
+          tone="teal"
         />
       </section>
 
+      {/* Gráficos */}
       <section className="charts-grid">
         <ProgressTrendChart data={history} />
         <TasksStatusChart tasksByProject={tasksByProject} />
       </section>
 
       <section className="charts-grid">
-        <BudgetDistributionChart projects={projects} />
         <WorkloadByRegionChart resources={resources} />
-      </section>
-
-      <section>
-        <h2 className="section-title">Proyectos activos</h2>
-        <div className="project-grid">
-          {projects.map((p) => (
-            <ProjectCard key={p.id} project={p} />
-          ))}
-        </div>
       </section>
     </div>
   )
