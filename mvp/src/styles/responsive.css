@@ -1,0 +1,129 @@
+/* ============================================
+   RESPONSIVE — ajustes para tablet y celular
+   Se importa al final para que sus reglas
+   tengan prioridad dentro de cada breakpoint.
+   ============================================ */
+
+/* Tablet: hasta 1024px */
+@media (max-width: 1024px) {
+  .kpi-grid,
+  .objectives-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .kanban {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .resource-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .resource-row__bar {
+    width: 100%;
+  }
+}
+
+/* Tablet pequeña / celular grande: hasta 768px */
+@media (max-width: 768px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    padding: 12px 16px;
+    overflow-x: auto;
+  }
+
+  .sidebar__brand {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .sidebar__nav {
+    flex-direction: row;
+    flex: none;
+    overflow-x: auto;
+  }
+
+  /* Solo iconos en el menú lateral para ahorrar espacio */
+  .sidebar__link span {
+    display: none;
+  }
+
+  .sidebar__footer {
+    display: none;
+  }
+
+  .app__main {
+    padding: 16px;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .topbar__right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .worldclock {
+    display: none;
+  }
+
+  .kpi-grid,
+  .objectives-grid,
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kanban {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-card--inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .tabs__item {
+    white-space: nowrap;
+  }
+}
+
+/* Celular: hasta 480px */
+@media (max-width: 480px) {
+  .topbar__title {
+    font-size: 22px;
+  }
+
+  .kpi-card__value {
+    font-size: 20px;
+  }
+
+  .resource-row {
+    padding: 10px 12px;
+  }
+
+  .chart-card__body {
+    height: 220px;
+  }
+}

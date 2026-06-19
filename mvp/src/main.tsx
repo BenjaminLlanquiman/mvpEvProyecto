@@ -10,6 +10,7 @@ import './styles/kanban.css'
 import './styles/charts.css'
 import './styles/forms.css'
 import './styles/utils.css'
+import './styles/responsive.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
